@@ -16,6 +16,10 @@ export interface IUser extends Document {
   totalWins: number;
   totalLosses: number;
   totalFlips: number;
+  currentStreak: number;
+  lastLoginDate?: Date;
+  dailyBonusClaimed?: Date;
+  totalEarned: number;
   gameHistory: IGameHistory[];
   createdAt: Date;
   updatedAt: Date;
@@ -44,6 +48,20 @@ const UserSchema: Schema = new Schema(
       default: 0,
     },
     totalFlips: {
+      type: Number,
+      default: 0,
+    },
+    currentStreak: {
+      type: Number,
+      default: 0,
+    },
+    lastLoginDate: {
+      type: Date,
+    },
+    dailyBonusClaimed: {
+      type: Date,
+    },
+    totalEarned: {
       type: Number,
       default: 0,
     },
