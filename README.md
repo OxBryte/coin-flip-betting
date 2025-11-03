@@ -1,36 +1,83 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🪙 Coin Flip Betting
+
+A modern, interactive coin flip betting application built with Next.js and Tailwind CSS. Bet on heads or tails with a beautiful, responsive UI.
+
+## Features
+
+- 🎯 **Heads/Tails Betting** - Choose your side and place bets
+- 💰 **Wallet Balance** - Track your balance in real-time
+- 🎨 **Beautiful UI** - Modern glassmorphic design with Tailwind CSS
+- 🎬 **Smooth Animations** - Coin flip animations and transitions
+- 📊 **Statistics** - Track your total flips and current bets
+- 🔄 **Auto Commit** - Automated git commits and pushes
+
+## Tech Stack
+
+- **Framework:** Next.js 16 with App Router
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS 4
+- **Deployment:** Vercel-ready
 
 ## Getting Started
 
-First, run the development server:
+### Installation
+
+```bash
+npm install
+```
+
+### Development
+
+Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Auto Commit
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The project includes an auto-commit script that automatically commits and pushes changes every 60 seconds:
 
-## Learn More
+```bash
+./auto-commit.sh
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Project Structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+coin-flip-betting/
+├── src/
+│   └── app/
+│       ├── page.tsx          # Main coin flip betting component
+│       ├── layout.tsx        # Root layout
+│       └── globals.css       # Global styles with Tailwind
+├── auto-commit.sh            # Auto commit and push script
+├── package.json
+└── README.md
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## How to Play
 
-## Deploy on Vercel
+1. **Set Your Bet Amount** - Choose from preset amounts or enter a custom value
+2. **Select Your Side** - Click on Heads 🟡 or Tails ⚪️
+3. **Flip the Coin** - Click the "Flip Coin!" button
+4. **Win or Lose** - If the coin lands on your chosen side, you win!
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Features in Development
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Real crypto integration
+- Wallet connection (MetaMask, WalletConnect)
+- Provably fair randomization
+- Multiplayer betting pools
+- Leaderboard
+- History tracking
+
+## License
+
+MIT
+
+## Warning
+
+⚠️ This is a demo application. No real money or cryptocurrency is being wagered in this version.
