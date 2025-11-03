@@ -1,11 +1,16 @@
 'use client';
 
 import { useState } from 'react';
+import { useAccount, useDisconnect } from 'wagmi';
+import { useWeb3Modal } from '@reown/appkit/react';
 
 type BetSide = 'heads' | 'tails' | null;
 type CoinState = 'idle' | 'flipping' | 'result';
 
 export default function Home() {
+  const { isConnected, address } = useAccount();
+  const { open } = useWeb3Modal();
+  const { disconnect } = useDisconnect();
   const [betAmount, setBetAmount] = useState<string>('0.1');
   const [selectedSide, setSelectedSide] = useState<BetSide>(null);
   const [coinState, setCoinState] = useState<CoinState>('idle');
@@ -19,6 +24,11 @@ export default function Home() {
   };
 
   const handleFlip = () => {
+    if (!isConnected) {
+      open();
+      return;
+    }
+    
     if (!selectedSide || coinState === 'flipping') return;
     
     const amount = parseFloat(betAmount);
@@ -91,6 +101,49 @@ export default function Home() {
           <p className="text-white/70 text-lg">
             Bet on heads or tails and win crypto!
           </p>
+        </div>
+
+        {/* Wallet Connection Status */}
+        <div className="mb-6">
+          {isConnected ? (
+            <div className="bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl p-4 shadow-lg">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="text-white text-2xl">✅</div>
+                  <div>
+                    <div className="text-white/90 text-xs font-medium mb-1">Connected Wallet</div>
+                    <div className="text-white text-sm font-mono">
+                      {address?.slice(0, 6)}...{address?.slice(-4)}
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => disconnect()}
+                  className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-white text-sm font-medium transition-colors"
+                >
+                  Disconnect
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl p-4 shadow-lg">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="text-white text-2xl">⚠️</div>
+                  <div>
+                    <div className="text-white/90 text-xs font-medium mb-1">Not Connected</div>
+                    <div className="text-white text-sm">Connect your wallet to play</div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => open()}
+                  className="px-4 py-2 bg-white text-purple-600 rounded-lg text-sm font-bold hover:bg-white/90 transition-colors"
+                >
+                  Connect Wallet
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Wallet Balance */}
@@ -173,23 +226,23 @@ export default function Home() {
           <div className="flex gap-4">
             <button
               onClick={() => handleBetPlace('heads')}
-              disabled={coinState === 'flipping' || coinState === 'result'}
+              disabled={!isConnected || coinState === 'flipping' || coinState === 'result'}
               className={`flex-1 py-6 rounded-2xl font-bold text-2xl transition-all transform hover:scale-105 ${
                 selectedSide === 'heads'
                   ? 'bg-yellow-500 text-white shadow-2xl scale-105'
                   : 'bg-white/20 text-white hover:bg-white/30'
-              } ${coinState !== 'idle' ? 'opacity-50 cursor-not-allowed' : ''}`}
+              } ${!isConnected || coinState !== 'idle' ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
               🟡 Heads
             </button>
             <button
               onClick={() => handleBetPlace('tails')}
-              disabled={coinState === 'flipping' || coinState === 'result'}
+              disabled={!isConnected || coinState === 'flipping' || coinState === 'result'}
               className={`flex-1 py-6 rounded-2xl font-bold text-2xl transition-all transform hover:scale-105 ${
                 selectedSide === 'tails'
                   ? 'bg-gray-200 text-gray-900 shadow-2xl scale-105'
                   : 'bg-white/20 text-white hover:bg-white/30'
-              } ${coinState !== 'idle' ? 'opacity-50 cursor-not-allowed' : ''}`}
+              } ${!isConnected || coinState !== 'idle' ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
               ⚪️ Tails
             </button>
