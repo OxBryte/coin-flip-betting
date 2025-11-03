@@ -19,14 +19,22 @@ export default function DailyBonus({ walletAddress, onBonusClaimed }: DailyBonus
 
     try {
       const response = await fetch(`/api/user/daily-bonus?walletAddress=${walletAddress}`);
-      if (!response.ok) throw new Error('Failed to check daily bonus');
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Failed to check daily bonus' }));
+        throw new Error(errorData.error || 'Failed to check daily bonus');
+      }
       const data = await response.json();
-      setCanClaim(data.canClaim);
-      setBonusAmount(data.bonusAmount);
-      setCurrentStreak(data.currentStreak);
+      setCanClaim(data.canClaim ?? false);
+      setBonusAmount(data.bonusAmount ?? 50);
+      setCurrentStreak(data.currentStreak ?? 0);
       setClaimed(!data.canClaim);
     } catch (error) {
       console.error('Error checking daily bonus:', error);
+      // Set defaults on error
+      setCanClaim(false);
+      setBonusAmount(50);
+      setCurrentStreak(0);
+      setClaimed(false);
     }
   };
 
@@ -87,7 +95,7 @@ export default function DailyBonus({ walletAddress, onBonusClaimed }: DailyBonus
           </div>
           <div className="text-gray-600 text-xs">
             {canClaim 
-              ? `Claim ${bonusAmount} points${currentStreak > 0 ? ` (+${currentStreak * 10} streak bonus)` : ''}!`
+              ? `Claim ${bonusAmount || 50} points${currentStreak > 0 ? ` (+${currentStreak * 10} streak bonus)` : ''}!`
               : 'Come back tomorrow for another bonus'
             }
           </div>
@@ -103,7 +111,7 @@ export default function DailyBonus({ walletAddress, onBonusClaimed }: DailyBonus
             disabled={isClaiming}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isClaiming ? 'Claiming...' : `Claim ${bonusAmount} pts`}
+            {isClaiming ? 'Claiming...' : `Claim ${bonusAmount || 50} pts`}
           </button>
         )}
       </div>

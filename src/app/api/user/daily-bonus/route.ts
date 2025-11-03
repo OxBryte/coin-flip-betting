@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
 
     if (!user) {
       return NextResponse.json(
-        { error: 'User not found' },
+        { error: 'User not found. Please connect your wallet first.' },
         { status: 404 }
       );
     }
@@ -41,8 +41,9 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Calculate bonus based on streak
-    const bonusAmount = 50 + (user.currentStreak * 10); // Base 50 + 10 per streak
+    // Calculate bonus based on streak (handle null/undefined)
+    const currentStreak = user.currentStreak || 0;
+    const bonusAmount = 50 + (currentStreak * 10); // Base 50 + 10 per streak
 
     // Update user
     const updatedUser = await User.findOneAndUpdate(
@@ -66,7 +67,7 @@ export async function POST(request: NextRequest) {
       user: {
         walletAddress: updatedUser!.walletAddress,
         points: updatedUser!.points,
-        currentStreak: updatedUser!.currentStreak,
+        currentStreak: updatedUser!.currentStreak || 0,
       },
     });
   } catch (error) {
@@ -95,9 +96,12 @@ export async function GET(request: NextRequest) {
     const user = await User.findOne({ walletAddress: walletAddress.toLowerCase() });
 
     if (!user) {
-      return NextResponse.json(
-        { canClaim: false, bonusAmount: 0, currentStreak: 0 }
-      );
+      // New users can claim bonus
+      return NextResponse.json({
+        canClaim: true,
+        bonusAmount: 50, // Base amount for new users
+        currentStreak: 0,
+      });
     }
 
     const now = new Date();
@@ -110,12 +114,14 @@ export async function GET(request: NextRequest) {
       canClaim = lastClaimedDate.getTime() !== today.getTime();
     }
 
-    const bonusAmount = 50 + (user.currentStreak * 10);
+    // Handle null/undefined currentStreak
+    const currentStreak = user.currentStreak || 0;
+    const bonusAmount = 50 + (currentStreak * 10);
 
     return NextResponse.json({
       canClaim,
       bonusAmount,
-      currentStreak: user.currentStreak,
+      currentStreak: currentStreak,
     });
   } catch (error) {
     console.error('Error in GET /api/user/daily-bonus:', error);
