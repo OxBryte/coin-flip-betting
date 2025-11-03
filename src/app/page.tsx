@@ -162,61 +162,48 @@ export default function Home() {
   const totalLosses = userData?.totalLosses || 0;
 
   return (
-    <div className={`min-h-screen bg-gray-50 flex ${viewMode === "dashboard" ? "items-start py-8" : "items-center justify-center"} p-4`}>
-      <div className={`${viewMode === "dashboard" ? "max-w-7xl" : "max-w-2xl"} w-full bg-white rounded-3xl shadow-xl p-8 border border-gray-200`}>
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className={`${viewMode === "dashboard" ? "max-w-7xl" : "max-w-2xl"} w-full bg-white rounded-2xl shadow-sm p-6`}>
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-5xl font-bold text-gray-900 mb-2">
+        <div className="text-center mb-6">
+          <h1 className="text-4xl font-semibold text-gray-900 mb-1">
             🪙 Coin Flip Betting
           </h1>
-          <p className="text-gray-600 text-lg">
-            Bet on heads or tails and win points instantly!
+          <p className="text-gray-500 text-sm">
+            Bet on heads or tails and win points instantly
           </p>
         </div>
 
         {/* Wallet Connection Status */}
-        <div className="mb-6">
+        <div className="mb-5">
           {isConnected ? (
-            <div className="bg-green-50 border-2 border-green-200 rounded-2xl p-4 shadow-sm">
+            <div className="bg-green-50 rounded-lg p-3">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="text-2xl">✅</div>
-                  <div>
-                    <div className="text-gray-900 text-xs font-medium mb-1">
-                      Connected Wallet
-                    </div>
-                    <div className="text-gray-700 text-sm font-mono">
-                      {address?.slice(0, 6)}...{address?.slice(-4)}
-                    </div>
+                <div className="flex items-center gap-2">
+                  <div className="text-sm">✅</div>
+                  <div className="text-gray-700 text-sm font-mono">
+                    {address?.slice(0, 6)}...{address?.slice(-4)}
                   </div>
                 </div>
                 <button
                   onClick={() => disconnect()}
-                  className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700 text-sm font-medium transition-colors"
+                  className="px-3 py-1.5 bg-white hover:bg-gray-50 rounded text-gray-600 text-xs font-medium transition-colors border border-gray-200"
                 >
                   Disconnect
                 </button>
               </div>
             </div>
           ) : (
-            <div className="bg-orange-50 border-2 border-orange-200 rounded-2xl p-4 shadow-sm">
+            <div className="bg-orange-50 rounded-lg p-3">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="text-2xl">⚠️</div>
-                  <div>
-                    <div className="text-gray-900 text-xs font-medium mb-1">
-                      Not Connected
-                    </div>
-                    <div className="text-gray-700 text-sm">
-                      Connect your wallet to play
-                    </div>
-                  </div>
+                <div className="text-gray-700 text-sm">
+                  Connect your wallet to play
                 </div>
                 <button
                   onClick={() => open()}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 transition-colors"
+                  className="px-4 py-1.5 bg-blue-600 text-white rounded text-sm font-medium hover:bg-blue-700 transition-colors"
                 >
-                  Connect Wallet
+                  Connect
                 </button>
               </div>
             </div>
@@ -225,26 +212,26 @@ export default function Home() {
 
         {/* Tab Navigation */}
         {isConnected && (
-          <div className="mb-6 flex gap-2">
+          <div className="mb-5 flex gap-1 bg-gray-100 p-1 rounded-lg">
             <button
               onClick={() => setViewMode("dashboard")}
-              className={`flex-1 py-3 px-4 rounded-xl font-semibold transition-all ${
+              className={`flex-1 py-2 px-3 rounded text-sm font-medium transition-all ${
                 viewMode === "dashboard"
-                  ? "bg-blue-600 text-white shadow-lg"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  ? "bg-white text-gray-900 shadow-sm"
+                  : "text-gray-600 hover:text-gray-900"
               }`}
             >
-              📊 Dashboard
+              Dashboard
             </button>
             <button
               onClick={() => setViewMode("play")}
-              className={`flex-1 py-3 px-4 rounded-xl font-semibold transition-all ${
+              className={`flex-1 py-2 px-3 rounded text-sm font-medium transition-all ${
                 viewMode === "play"
-                  ? "bg-blue-600 text-white shadow-lg"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  ? "bg-white text-gray-900 shadow-sm"
+                  : "text-gray-600 hover:text-gray-900"
               }`}
             >
-              🎮 Play
+              Play
             </button>
           </div>
         )}
