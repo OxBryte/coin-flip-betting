@@ -19,7 +19,7 @@ export default function DashboardPage() {
 
         {isConnected ? (
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-            <div className="lg:col-span-3 space-y-4">
+            <div className="lg:col-span-3">
               <Dashboard walletAddress={address} />
             </div>
             <div className="space-y-4">

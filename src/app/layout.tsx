@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { AppKitProvider } from "@/components/AppKitProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,9 +35,7 @@ export default function RootLayout({
             <Link href="/leaderboard" className="text-gray-700 hover:text-gray-900">Leaderboard</Link>
           </nav>
         </header>
-        <AppKitProvider>
-          {children}
-        </AppKitProvider>
+        {children}
       </body>
     </html>
   );
