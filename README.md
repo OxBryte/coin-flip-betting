@@ -11,7 +11,7 @@ A modern, interactive coin flip betting application built with Next.js and Tailw
 - 💰 **Points System** - Track your points in real-time with MongoDB
 - 🔐 **User Authentication** - Automatic user creation on wallet connection
 - 📈 **Game History** - View recent games with detailed results and timestamps
-- 🎨 **Beautiful UI** - Modern glassmorphic design with Tailwind CSS
+- 🎨 **Minimalistic UI** - Clean, light theme design with centered layout
 - 🎬 **Smooth Animations** - Coin flip animations and transitions
 - 🔄 **Auto Commit** - Automated git commits and pushes
 
@@ -133,7 +133,7 @@ The app supports multiple wallet providers through Reown/WalletConnect:
 
 ## Analytics Dashboard
 
-The dashboard is the default view when you connect your wallet. It provides comprehensive analytics and insights:
+The dashboard is the default view when you connect your wallet. It provides comprehensive analytics and insights with a clean, minimalistic interface:
 
 ### Key Metrics
 - **Total Flips:** Your overall game count
@@ -154,8 +154,17 @@ The dashboard is the default view when you connect your wallet. It provides comp
 - **Auto-Refresh:** Dashboard automatically updates when you complete a game
 
 ### View Modes
-- **Dashboard View:** Analytics and statistics (default)
+- **Dashboard View:** Analytics and statistics (default, centered layout)
 - **Play View:** Coin flip betting interface
+
+## Design
+
+The application features a **minimalistic light theme** with:
+- Clean, centered layout for optimal viewing
+- Subtle gray color scheme with minimal borders
+- Compact, information-dense dashboard
+- Focus on content over decoration
+- Responsive design that works on all screen sizes
 
 ## Features in Development
 
