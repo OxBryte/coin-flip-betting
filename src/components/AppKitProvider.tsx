@@ -31,7 +31,8 @@ const wagmiAdapter = new WagmiAdapter({
   ssr: true,
 });
 
-// Create modal - this should only be called once in the app
+// Initialize AppKit at module level - MUST be called before useAppKit hook
+// This ensures createAppKit runs before any components using the hook render
 if (typeof window !== "undefined") {
   createAppKit({
     adapters: [wagmiAdapter],
