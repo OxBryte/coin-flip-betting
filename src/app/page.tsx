@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useAccount, useDisconnect } from "wagmi";
-import { useAppKit } from "@reown/appkit/react";
+import { useAppKit, useAppKitAccount } from "@reown/appkit/react";
 import Dashboard from "@/components/Dashboard";
 import Leaderboard from "@/components/Leaderboard";
 import DailyBonus from "@/components/DailyBonus";
@@ -22,7 +22,7 @@ interface UserData {
 }
 
 export default function Home() {
-  const { isConnected, address } = useAccount();
+  const { isConnected, address } = useAppKitAccount();
   const { open } = useAppKit();
   const { disconnect } = useDisconnect();
   const [viewMode, setViewMode] = useState<ViewMode>("dashboard"); // Dashboard is default
