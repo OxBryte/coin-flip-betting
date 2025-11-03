@@ -75,7 +75,7 @@ export default function Dashboard({ walletAddress }: DashboardProps) {
   if (!walletAddress) {
     return (
       <div className="text-center py-12">
-        <div className="text-white/70 text-lg mb-4">Connect your wallet to view your dashboard</div>
+        <div className="text-gray-600 text-lg mb-4">Connect your wallet to view your dashboard</div>
       </div>
     );
   }
@@ -83,7 +83,7 @@ export default function Dashboard({ walletAddress }: DashboardProps) {
   if (isLoading) {
     return (
       <div className="text-center py-12">
-        <div className="text-white text-lg">Loading dashboard...</div>
+        <div className="text-gray-900 text-lg">Loading dashboard...</div>
       </div>
     );
   }
@@ -91,7 +91,7 @@ export default function Dashboard({ walletAddress }: DashboardProps) {
   if (!data) {
     return (
       <div className="text-center py-12">
-        <div className="text-white/70 text-lg">No data available</div>
+        <div className="text-gray-600 text-lg">No data available</div>
       </div>
     );
   }
@@ -116,163 +116,173 @@ export default function Dashboard({ walletAddress }: DashboardProps) {
   return (
     <div className="space-y-6">
       {/* Header with Refresh Button */}
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-white">📊 Your Dashboard</h2>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-3xl font-bold text-gray-900">📊 Your Dashboard</h2>
         <button
           onClick={fetchDashboardData}
           disabled={isLoading}
-          className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-white text-sm font-medium transition-colors disabled:opacity-50"
+          className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700 text-sm font-medium transition-colors disabled:opacity-50"
         >
           🔄 Refresh
         </button>
       </div>
 
       {/* Main Stats Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-4 shadow-lg">
-          <div className="text-white/80 text-xs mb-1">Total Flips</div>
-          <div className="text-2xl font-bold text-white">{data.stats.totalFlips}</div>
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
+        <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-5 shadow-sm">
+          <div className="text-gray-700 text-sm mb-2">Total Flips</div>
+          <div className="text-3xl font-bold text-blue-700">{data.stats.totalFlips}</div>
         </div>
-        <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-4 shadow-lg">
-          <div className="text-white/80 text-xs mb-1">Win Rate</div>
-          <div className="text-2xl font-bold text-white">{data.stats.winRate}%</div>
+        <div className="bg-green-50 border-2 border-green-200 rounded-xl p-5 shadow-sm">
+          <div className="text-gray-700 text-sm mb-2">Win Rate</div>
+          <div className="text-3xl font-bold text-green-700">{data.stats.winRate}%</div>
         </div>
-        <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-4 shadow-lg">
-          <div className="text-white/80 text-xs mb-1">Best Streak</div>
-          <div className="text-2xl font-bold text-white">{data.stats.bestStreak}</div>
+        <div className="bg-purple-50 border-2 border-purple-200 rounded-xl p-5 shadow-sm">
+          <div className="text-gray-700 text-sm mb-2">Best Streak</div>
+          <div className="text-3xl font-bold text-purple-700">{data.stats.bestStreak}</div>
         </div>
-        <div className="bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl p-4 shadow-lg">
-          <div className="text-white/80 text-xs mb-1">Current Points</div>
-          <div className="text-2xl font-bold text-white">{data.stats.currentPoints.toLocaleString()}</div>
+        <div className="bg-emerald-50 border-2 border-emerald-200 rounded-xl p-5 shadow-sm">
+          <div className="text-gray-700 text-sm mb-2">Current Points</div>
+          <div className="text-3xl font-bold text-emerald-700">{data.stats.currentPoints.toLocaleString()}</div>
         </div>
       </div>
 
       {/* Win/Loss Stats */}
-      <div className="grid grid-cols-2 gap-4">
-        <div className="bg-white/10 rounded-xl p-6 backdrop-blur">
-          <div className="text-white/70 text-sm mb-2">Total Wins</div>
-          <div className="text-3xl font-bold text-green-400">{data.stats.totalWins}</div>
-          <div className="text-green-300 text-xs mt-1">+{data.stats.totalPointsWon.toLocaleString()} points</div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-green-50 border-2 border-green-200 rounded-xl p-8">
+          <div className="text-gray-700 text-base mb-3">Total Wins</div>
+          <div className="text-4xl font-bold text-green-600">{data.stats.totalWins}</div>
+          <div className="text-green-700 text-sm mt-2">+{data.stats.totalPointsWon.toLocaleString()} points</div>
         </div>
-        <div className="bg-white/10 rounded-xl p-6 backdrop-blur">
-          <div className="text-white/70 text-sm mb-2">Total Losses</div>
-          <div className="text-3xl font-bold text-red-400">{data.stats.totalLosses}</div>
-          <div className="text-red-300 text-xs mt-1">-{data.stats.totalPointsLost.toLocaleString()} points</div>
+        <div className="bg-red-50 border-2 border-red-200 rounded-xl p-8">
+          <div className="text-gray-700 text-base mb-3">Total Losses</div>
+          <div className="text-4xl font-bold text-red-600">{data.stats.totalLosses}</div>
+          <div className="text-red-700 text-sm mt-2">-{data.stats.totalPointsLost.toLocaleString()} points</div>
         </div>
       </div>
 
       {/* Biggest Win */}
       {data.stats.biggestWin && (
-        <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-xl p-6 border border-yellow-400/30">
-          <div className="text-white/90 text-sm mb-2">🏆 Biggest Win</div>
-          <div className="text-xl font-bold text-white">
+        <div className="bg-yellow-50 border-2 border-yellow-300 rounded-xl p-8">
+          <div className="text-gray-900 text-base mb-3 font-semibold">🏆 Biggest Win</div>
+          <div className="text-2xl font-bold text-gray-900">
             +{data.stats.biggestWin.pointsChange.toLocaleString()} points
           </div>
-          <div className="text-white/70 text-xs mt-1">
+          <div className="text-gray-700 text-sm mt-2">
             Bet: {data.stats.biggestWin.betAmount.toLocaleString()} points •{' '}
             {new Date(data.stats.biggestWin.timestamp).toLocaleDateString()}
           </div>
         </div>
       )}
 
-      {/* Last 7 Days Chart */}
-      <div className="bg-white/10 rounded-xl p-6 backdrop-blur">
-        <div className="text-white font-medium mb-4">Wins & Losses (Last 7 Days)</div>
-        <div className="flex items-end justify-between gap-2 h-40">
-          {last7Days.map((date, index) => {
-            const dayData = data.dayAnalytics[date] || { wins: 0, losses: 0 };
-            const total = dayData.wins + dayData.losses;
-            const winsHeight = total > 0 ? (dayData.wins / total) * 100 : 0;
-            const lossesHeight = total > 0 ? (dayData.losses / total) * 100 : 0;
+      {/* Charts Grid - Two Column Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Last 7 Days Chart */}
+        <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+          <div className="text-gray-900 font-medium mb-4 text-lg">Wins & Losses (Last 7 Days)</div>
+          <div className="flex items-end justify-between gap-3 h-48">
+            {last7Days.map((date, index) => {
+              const dayData = data.dayAnalytics[date] || { wins: 0, losses: 0 };
+              const total = dayData.wins + dayData.losses;
+              const winsHeight = total > 0 ? (dayData.wins / total) * 100 : 0;
+              const lossesHeight = total > 0 ? (dayData.losses / total) * 100 : 0;
 
-            return (
-              <div key={date} className="flex-1 flex flex-col items-center gap-1">
-                <div className="flex flex-col-reverse w-full gap-0.5 h-32">
-                  {total > 0 && (
-                    <>
-                      <div
-                        className="bg-red-400 rounded-t"
-                        style={{ height: `${lossesHeight}%` }}
-                        title={`Losses: ${dayData.losses}`}
-                      />
-                      <div
-                        className="bg-green-400 rounded-t"
-                        style={{ height: `${winsHeight}%` }}
-                        title={`Wins: ${dayData.wins}`}
-                      />
-                    </>
-                  )}
-                </div>
-                <div className="text-white/60 text-xs">{dayLabels[index]}</div>
-                <div className="text-white/40 text-xs">{total}</div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Performance by Hour */}
-      <div className="bg-white/10 rounded-xl p-6 backdrop-blur">
-        <div className="text-white font-medium mb-4">Performance by Hour of Day</div>
-        {activeHours.length === 0 ? (
-          <div className="text-white/50 text-center py-4">No hourly data yet. Start playing to see your best hours!</div>
-        ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
-            {activeHours.map((hour) => {
-              const stats = data.hourAnalytics[hour];
-              const winRate = stats.count > 0 ? ((stats.wins / stats.count) * 100).toFixed(0) : 0;
-              const hourLabel = hour === 0 ? '12 AM' : hour < 12 ? `${hour} AM` : hour === 12 ? '12 PM' : `${hour - 12} PM`;
               return (
-                <div key={hour} className="text-center bg-white/5 rounded-lg p-3">
-                  <div className="text-white/70 text-xs mb-2 font-semibold">{hourLabel}</div>
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-center gap-2">
-                      <span className="text-green-400 text-xs font-bold">{stats.wins}W</span>
-                      <span className="text-white/40">/</span>
-                      <span className="text-red-400 text-xs font-bold">{stats.losses}L</span>
-                    </div>
-                    <div className="text-white/60 text-xs">{winRate}% WR</div>
-                    <div className="text-white/40 text-xs">{stats.count} games</div>
+                <div key={date} className="flex-1 flex flex-col items-center gap-1">
+                  <div className="flex flex-col-reverse w-full gap-0.5 h-40">
+                    {total > 0 && (
+                      <>
+                        <div
+                          className="bg-red-400 rounded-t"
+                          style={{ height: `${lossesHeight}%` }}
+                          title={`Losses: ${dayData.losses}`}
+                        />
+                        <div
+                          className="bg-green-500 rounded-t"
+                          style={{ height: `${winsHeight}%` }}
+                          title={`Wins: ${dayData.wins}`}
+                        />
+                      </>
+                    )}
                   </div>
+                  <div className="text-gray-600 text-xs">{dayLabels[index]}</div>
+                  <div className="text-gray-400 text-xs">{total}</div>
                 </div>
               );
             })}
           </div>
-        )}
+        </div>
+
+        {/* Performance by Hour */}
+        <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+          <div className="text-gray-900 font-medium mb-4 text-lg">Performance by Hour of Day</div>
+          {activeHours.length === 0 ? (
+            <div className="text-gray-500 text-center py-8">No hourly data yet. Start playing to see your best hours!</div>
+          ) : (
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 max-h-48 overflow-y-auto">
+              {activeHours.map((hour) => {
+                const stats = data.hourAnalytics[hour];
+                const winRate = stats.count > 0 ? ((stats.wins / stats.count) * 100).toFixed(0) : 0;
+                const hourLabel = hour === 0 ? '12 AM' : hour < 12 ? `${hour} AM` : hour === 12 ? '12 PM' : `${hour - 12} PM`;
+                return (
+                  <div key={hour} className="text-center bg-white rounded-lg p-3 border border-gray-200">
+                    <div className="text-gray-700 text-xs mb-2 font-semibold">{hourLabel}</div>
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-center gap-2">
+                        <span className="text-green-600 text-xs font-bold">{stats.wins}W</span>
+                        <span className="text-gray-400">/</span>
+                        <span className="text-red-600 text-xs font-bold">{stats.losses}L</span>
+                      </div>
+                      <div className="text-gray-600 text-xs">{winRate}% WR</div>
+                      <div className="text-gray-400 text-xs">{stats.count} games</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Recent Games */}
-      <div className="bg-white/10 rounded-xl p-6 backdrop-blur">
-        <div className="text-white font-medium mb-4">Recent Games</div>
-        <div className="space-y-2 max-h-64 overflow-y-auto">
+      <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+        <div className="text-gray-900 font-medium mb-4 text-lg">Recent Games</div>
+        <div className="space-y-2 max-h-96 overflow-y-auto">
           {data.recentGames.length === 0 ? (
-            <div className="text-white/50 text-center py-4">No games yet. Start playing!</div>
+            <div className="text-gray-500 text-center py-8">No games yet. Start playing!</div>
           ) : (
-            data.recentGames.map((game, index) => (
-              <div
-                key={index}
-                className={`flex items-center justify-between p-3 rounded-lg ${
-                  game.isWinner ? 'bg-green-500/20' : 'bg-red-500/20'
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <div className={`text-2xl ${game.isWinner ? 'text-green-400' : 'text-red-400'}`}>
-                    {game.isWinner ? '✅' : '❌'}
-                  </div>
-                  <div>
-                    <div className="text-white font-medium">
-                      {game.selectedSide.toUpperCase()} → {game.result.toUpperCase()}
+            <>
+              {data.recentGames.map((game, index) => (
+                <div
+                  key={index}
+                  className={`flex items-center justify-between p-4 rounded-lg ${
+                    game.isWinner ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'
+                  }`}
+                >
+                  <div className="flex items-center gap-4">
+                    <div className={`text-2xl ${game.isWinner ? 'text-green-600' : 'text-red-600'}`}>
+                      {game.isWinner ? '✅' : '❌'}
                     </div>
-                    <div className="text-white/60 text-xs">
-                      {new Date(game.timestamp).toLocaleString()}
+                    <div>
+                      <div className="text-gray-900 font-semibold">
+                        {game.selectedSide.toUpperCase()} → {game.result.toUpperCase()}
+                      </div>
+                      <div className="text-gray-600 text-sm">
+                        {new Date(game.timestamp).toLocaleString()}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className={`text-xl font-bold ${game.isWinner ? 'text-green-600' : 'text-red-600'}`}>
+                      {game.pointsChange > 0 ? '+' : ''}{game.pointsChange.toLocaleString()}
+                    </div>
+                    <div className="text-gray-500 text-xs mt-1">
+                      Bet: {game.betAmount.toLocaleString()}
                     </div>
                   </div>
                 </div>
-                <div className={`font-bold ${game.isWinner ? 'text-green-400' : 'text-red-400'}`}>
-                  {game.pointsChange > 0 ? '+' : ''}{game.pointsChange.toLocaleString()}
-                </div>
-              </div>
-            ))
+              ))}
+            </>
           )}
         </div>
       </div>

@@ -162,14 +162,14 @@ export default function Home() {
   const totalLosses = userData?.totalLosses || 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4">
-      <div className="max-w-2xl w-full bg-white/10 backdrop-blur-lg rounded-3xl shadow-2xl p-8 border border-white/20">
+    <div className={`min-h-screen bg-gray-50 flex ${viewMode === "dashboard" ? "items-start py-8" : "items-center justify-center"} p-4`}>
+      <div className={`${viewMode === "dashboard" ? "max-w-7xl" : "max-w-2xl"} w-full bg-white rounded-3xl shadow-xl p-8 border border-gray-200`}>
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-5xl font-bold text-white mb-2">
+          <h1 className="text-5xl font-bold text-gray-900 mb-2">
             🪙 Coin Flip Betting
           </h1>
-          <p className="text-white/70 text-lg">
+          <p className="text-gray-600 text-lg">
             Bet on heads or tails and win points instantly!
           </p>
         </div>
@@ -177,44 +177,44 @@ export default function Home() {
         {/* Wallet Connection Status */}
         <div className="mb-6">
           {isConnected ? (
-            <div className="bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl p-4 shadow-lg">
+            <div className="bg-green-50 border-2 border-green-200 rounded-2xl p-4 shadow-sm">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="text-white text-2xl">✅</div>
+                  <div className="text-2xl">✅</div>
                   <div>
-                    <div className="text-white/90 text-xs font-medium mb-1">
+                    <div className="text-gray-900 text-xs font-medium mb-1">
                       Connected Wallet
                     </div>
-                    <div className="text-white text-sm font-mono">
+                    <div className="text-gray-700 text-sm font-mono">
                       {address?.slice(0, 6)}...{address?.slice(-4)}
                     </div>
                   </div>
                 </div>
                 <button
                   onClick={() => disconnect()}
-                  className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-white text-sm font-medium transition-colors"
+                  className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700 text-sm font-medium transition-colors"
                 >
                   Disconnect
                 </button>
               </div>
             </div>
           ) : (
-            <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl p-4 shadow-lg">
+            <div className="bg-orange-50 border-2 border-orange-200 rounded-2xl p-4 shadow-sm">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="text-white text-2xl">⚠️</div>
+                  <div className="text-2xl">⚠️</div>
                   <div>
-                    <div className="text-white/90 text-xs font-medium mb-1">
+                    <div className="text-gray-900 text-xs font-medium mb-1">
                       Not Connected
                     </div>
-                    <div className="text-white text-sm">
+                    <div className="text-gray-700 text-sm">
                       Connect your wallet to play
                     </div>
                   </div>
                 </div>
                 <button
                   onClick={() => open()}
-                  className="px-4 py-2 bg-white text-purple-600 rounded-lg text-sm font-bold hover:bg-white/90 transition-colors"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 transition-colors"
                 >
                   Connect Wallet
                 </button>
@@ -230,8 +230,8 @@ export default function Home() {
               onClick={() => setViewMode("dashboard")}
               className={`flex-1 py-3 px-4 rounded-xl font-semibold transition-all ${
                 viewMode === "dashboard"
-                  ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg"
-                  : "bg-white/10 text-white/70 hover:bg-white/20"
+                  ? "bg-blue-600 text-white shadow-lg"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
             >
               📊 Dashboard
@@ -240,8 +240,8 @@ export default function Home() {
               onClick={() => setViewMode("play")}
               className={`flex-1 py-3 px-4 rounded-xl font-semibold transition-all ${
                 viewMode === "play"
-                  ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg"
-                  : "bg-white/10 text-white/70 hover:bg-white/20"
+                  ? "bg-blue-600 text-white shadow-lg"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
             >
               🎮 Play
@@ -256,17 +256,17 @@ export default function Home() {
         {viewMode === "play" && (
           <>
             {/* Points Balance */}
-            <div className="bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl p-6 mb-8 text-center shadow-lg">
-              <div className="text-white/90 text-sm font-medium mb-1">
+            <div className="bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-6 mb-8 text-center shadow-sm">
+              <div className="text-gray-700 text-sm font-medium mb-1">
                 Your Points
               </div>
-              <div className="text-4xl font-bold text-white">
+              <div className="text-4xl font-bold text-gray-900">
                 {isLoading ? "Loading..." : points.toLocaleString()}
               </div>
               {pointsChange !== 0 && (
                 <div
                   className={`text-lg font-semibold mt-2 ${
-                    pointsChange > 0 ? "text-green-200" : "text-red-200"
+                    pointsChange > 0 ? "text-green-600" : "text-red-600"
                   }`}
                 >
                   {pointsChange > 0 ? "+" : ""}
@@ -274,7 +274,7 @@ export default function Home() {
                 </div>
               )}
               {!isConnected && (
-                <div className="text-white/70 text-xs mt-2">
+                <div className="text-gray-600 text-xs mt-2">
                   Connect wallet to start with 1,000 points
                 </div>
               )}
@@ -282,7 +282,7 @@ export default function Home() {
 
             {/* Coin Display */}
             <div className="flex justify-center items-center mb-8">
-              <div className="bg-white/20 rounded-full p-12 shadow-2xl border-4 border-white/30">
+              <div className="bg-gray-100 rounded-full p-12 shadow-lg border-4 border-gray-200">
                 {getCoinIcon()}
               </div>
             </div>
@@ -292,23 +292,23 @@ export default function Home() {
               <div
                 className={`text-center mb-6 p-4 rounded-2xl ${
                   isWinner
-                    ? "bg-green-500/20 border-2 border-green-400"
-                    : "bg-red-500/20 border-2 border-red-400"
+                    ? "bg-green-50 border-2 border-green-300"
+                    : "bg-red-50 border-2 border-red-300"
                 }`}
               >
-                <div className="text-3xl font-bold mb-2">
+                <div className="text-3xl font-bold mb-2 text-gray-900">
                   {isWinner ? "🎉 You Won! 🎉" : "😔 You Lost"}
                 </div>
-                <div className="text-lg font-medium text-white">
+                <div className="text-lg font-medium text-gray-800">
                   Result: <span className="uppercase font-bold">{result}</span>
                 </div>
-                <div className="text-sm text-white/70 mt-1">
+                <div className="text-sm text-gray-700 mt-1">
                   {isWinner
                     ? `+${parseFloat(betAmount)} points`
                     : `-${parseFloat(betAmount)} points`}
                 </div>
                 {isWinner && (
-                  <div className="text-xs text-green-300 mt-2 font-semibold">
+                  <div className="text-xs text-green-600 mt-2 font-semibold">
                     ⚡ Instant Payout! Your points have been updated.
                   </div>
                 )}
@@ -317,31 +317,31 @@ export default function Home() {
 
             {/* Bet Amount Input */}
             <div className="mb-6">
-              <label className="block text-white font-medium mb-2 text-center">
+              <label className="block text-gray-700 font-medium mb-2 text-center">
                 Bet Amount (Points)
               </label>
               <div className="flex gap-2">
                 <button
                   onClick={() => setBetAmount("10")}
-                  className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-white transition-colors"
+                  className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700 transition-colors"
                 >
                   10
                 </button>
                 <button
                   onClick={() => setBetAmount("50")}
-                  className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-white transition-colors"
+                  className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700 transition-colors"
                 >
                   50
                 </button>
                 <button
                   onClick={() => setBetAmount("100")}
-                  className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-white transition-colors"
+                  className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700 transition-colors"
                 >
                   100
                 </button>
                 <button
                   onClick={() => setBetAmount("500")}
-                  className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-white transition-colors"
+                  className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700 transition-colors"
                 >
                   500
                 </button>
@@ -349,7 +349,7 @@ export default function Home() {
                   type="number"
                   value={betAmount}
                   onChange={(e) => setBetAmount(e.target.value)}
-                  className="flex-1 px-4 py-2 bg-white/20 border border-white/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50"
+                  className="flex-1 px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Custom amount"
                   min="1"
                   step="1"
@@ -359,7 +359,7 @@ export default function Home() {
 
             {/* Side Selection */}
             <div className="mb-8">
-              <div className="text-white font-medium mb-4 text-center">
+              <div className="text-gray-700 font-medium mb-4 text-center">
                 Choose Your Side
               </div>
               <div className="flex gap-4">
@@ -373,8 +373,8 @@ export default function Home() {
                   }
                   className={`flex-1 py-6 rounded-2xl font-bold text-2xl transition-all transform hover:scale-105 ${
                     selectedSide === "heads"
-                      ? "bg-yellow-500 text-white shadow-2xl scale-105"
-                      : "bg-white/20 text-white hover:bg-white/30"
+                      ? "bg-yellow-400 text-gray-900 shadow-lg scale-105"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                   } ${
                     !isConnected || coinState !== "idle" || isLoading
                       ? "opacity-50 cursor-not-allowed"
@@ -393,8 +393,8 @@ export default function Home() {
                   }
                   className={`flex-1 py-6 rounded-2xl font-bold text-2xl transition-all transform hover:scale-105 ${
                     selectedSide === "tails"
-                      ? "bg-gray-200 text-gray-900 shadow-2xl scale-105"
-                      : "bg-white/20 text-white hover:bg-white/30"
+                      ? "bg-gray-300 text-gray-900 shadow-lg scale-105"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                   } ${
                     !isConnected || coinState !== "idle" || isLoading
                       ? "opacity-50 cursor-not-allowed"
@@ -424,31 +424,31 @@ export default function Home() {
                 coinState === "idle" &&
                 isConnected &&
                 !isLoading
-                  ? "bg-gradient-to-r from-pink-500 to-rose-500 text-white hover:from-pink-600 hover:to-rose-600 shadow-2xl transform hover:scale-105"
-                  : "bg-gray-500/50 text-gray-300 cursor-not-allowed"
+                  ? "bg-blue-600 text-white hover:bg-blue-700 shadow-lg transform hover:scale-105"
+                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
               }`}
             >
               {coinState === "flipping" ? "🔄 Flipping..." : "🚀 Flip Coin!"}
             </button>
 
             {/* Stats */}
-            <div className="mt-8 pt-6 border-t border-white/20">
+            <div className="mt-8 pt-6 border-t border-gray-200">
               <div className="grid grid-cols-3 gap-4 text-center">
-                <div className="bg-white/10 rounded-xl p-4">
-                  <div className="text-white/70 text-sm mb-1">Total Flips</div>
-                  <div className="text-2xl font-bold text-white">
+                <div className="bg-gray-50 rounded-xl p-4">
+                  <div className="text-gray-600 text-sm mb-1">Total Flips</div>
+                  <div className="text-2xl font-bold text-gray-900">
                     {totalFlips}
                   </div>
                 </div>
-                <div className="bg-white/10 rounded-xl p-4">
-                  <div className="text-white/70 text-sm mb-1">Wins</div>
-                  <div className="text-2xl font-bold text-green-400">
+                <div className="bg-gray-50 rounded-xl p-4">
+                  <div className="text-gray-600 text-sm mb-1">Wins</div>
+                  <div className="text-2xl font-bold text-green-600">
                     {totalWins}
                   </div>
                 </div>
-                <div className="bg-white/10 rounded-xl p-4">
-                  <div className="text-white/70 text-sm mb-1">Losses</div>
-                  <div className="text-2xl font-bold text-red-400">
+                <div className="bg-gray-50 rounded-xl p-4">
+                  <div className="text-gray-600 text-sm mb-1">Losses</div>
+                  <div className="text-2xl font-bold text-red-600">
                     {totalLosses}
                   </div>
                 </div>
@@ -456,7 +456,7 @@ export default function Home() {
             </div>
 
             {/* Info */}
-            <div className="mt-6 text-center text-white/60 text-xs">
+            <div className="mt-6 text-center text-gray-500 text-xs">
               💡 Winners get 2x their bet instantly! Connect wallet to start
               playing.
             </div>
@@ -466,7 +466,7 @@ export default function Home() {
         {/* Show message when not connected */}
         {!isConnected && (
           <div className="text-center py-12">
-            <div className="text-white/70 text-lg mb-4">
+            <div className="text-gray-600 text-lg mb-4">
               Connect your wallet to view dashboard and play
             </div>
           </div>
