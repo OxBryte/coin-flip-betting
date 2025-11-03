@@ -4,6 +4,7 @@ export interface IGameHistory {
   result: 'heads' | 'tails';
   selectedSide: 'heads' | 'tails';
   betAmount: number;
+  leverage?: number;
   pointsChange: number;
   isWinner: boolean;
   timestamp: Date;
@@ -61,6 +62,10 @@ const UserSchema: Schema = new Schema(
         betAmount: {
           type: Number,
           required: true,
+        },
+        leverage: {
+          type: Number,
+          default: 2,
         },
         pointsChange: {
           type: Number,

@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
     await connectDB();
 
     const body = await request.json();
-    const { walletAddress, betAmount, selectedSide } = body;
+    const { walletAddress, betAmount, selectedSide, leverage } = body;
 
     if (!walletAddress || !betAmount || !selectedSide) {
       return NextResponse.json(
@@ -25,6 +25,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Validate and set leverage (default to 2x if not provided)
+    const leverageMultiplier = leverage ? parseFloat(leverage) : 2;
+    if (isNaN(leverageMultiplier) || leverageMultiplier < 1 || leverageMultiplier > 100) {
+      return NextResponse.json(
+        { error: 'Invalid leverage. Must be between 1x and 100x' },
+        { status: 400 }
+      );
+    }
+
     // Find user
     const user = await User.findOne({ walletAddress: walletAddress.toLowerCase() });
 
@@ -35,7 +44,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if user has enough points
+    // Check if user has enough points for bet (only need bet amount, not leveraged amount)
     if (user.points < betPoints) {
       return NextResponse.json(
         { error: 'Insufficient points' },
@@ -47,16 +56,21 @@ export async function POST(request: NextRequest) {
     const coinResult: 'heads' | 'tails' = Math.random() > 0.5 ? 'heads' : 'tails';
     const isWinner = coinResult === selectedSide;
 
-    // Calculate payout (instant payout: 2x for winners, 0 for losers)
+    // Calculate payout with leverage (futures-style)
+    // Win: Get betAmount * leverage (your bet + profit)
+    // Loss: Lose only your bet amount (margin)
     let pointsChange = 0;
     let newPoints = user.points;
 
     if (isWinner) {
-      // Winner gets 2x their bet (they keep their bet + win equal amount)
-      pointsChange = betPoints; // Net gain
-      newPoints = user.points + betPoints;
+      // Winner: Total return = betAmount * leverage
+      // Profit = betAmount * leverage - betAmount = betAmount * (leverage - 1)
+      const totalReturn = betPoints * leverageMultiplier;
+      const profit = betPoints * (leverageMultiplier - 1);
+      pointsChange = profit; // Net gain
+      newPoints = user.points + profit;
     } else {
-      // Loser loses their bet
+      // Loser: Lose only the margin (bet amount)
       pointsChange = -betPoints;
       newPoints = user.points - betPoints;
     }
@@ -66,6 +80,7 @@ export async function POST(request: NextRequest) {
       result: coinResult,
       selectedSide: selectedSide as 'heads' | 'tails',
       betAmount: betPoints,
+      leverage: leverageMultiplier,
       pointsChange,
       isWinner,
       timestamp: new Date(),
@@ -97,6 +112,7 @@ export async function POST(request: NextRequest) {
       result: coinResult,
       isWinner,
       pointsChange,
+      leverage: leverageMultiplier,
       user: {
         walletAddress: updatedUser!.walletAddress,
         points: updatedUser!.points,

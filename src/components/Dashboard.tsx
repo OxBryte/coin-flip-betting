@@ -24,6 +24,7 @@ interface DashboardData {
     result: string;
     selectedSide: string;
     betAmount: number;
+    leverage?: number;
     pointsChange: number;
     isWinner: boolean;
     timestamp: string;
@@ -258,14 +259,22 @@ export default function Dashboard({ walletAddress }: DashboardProps) {
                     <div>
                       <div className="text-gray-900 text-sm font-medium">
                         {game.selectedSide.toUpperCase()} → {game.result.toUpperCase()}
+                        {game.leverage && game.leverage > 1 && (
+                          <span className="text-gray-500 ml-1">({game.leverage}x)</span>
+                        )}
                       </div>
                       <div className="text-gray-400 text-xs">
                         {new Date(game.timestamp).toLocaleDateString()}
                       </div>
                     </div>
                   </div>
-                  <div className={`text-sm font-semibold ${game.isWinner ? 'text-green-600' : 'text-red-600'}`}>
-                    {game.pointsChange > 0 ? '+' : ''}{game.pointsChange.toLocaleString()}
+                  <div className="text-right">
+                    <div className={`text-sm font-semibold ${game.isWinner ? 'text-green-600' : 'text-red-600'}`}>
+                      {game.pointsChange > 0 ? '+' : ''}{game.pointsChange.toLocaleString()}
+                    </div>
+                    <div className="text-gray-400 text-xs mt-0.5">
+                      Bet: {game.betAmount}
+                    </div>
                   </div>
                 </div>
               ))}

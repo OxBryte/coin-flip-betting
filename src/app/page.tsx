@@ -23,6 +23,7 @@ export default function Home() {
   const { disconnect } = useDisconnect();
   const [viewMode, setViewMode] = useState<ViewMode>("dashboard"); // Dashboard is default
   const [betAmount, setBetAmount] = useState<string>("10");
+  const [leverage, setLeverage] = useState<string>("2");
   const [selectedSide, setSelectedSide] = useState<BetSide>(null);
   const [coinState, setCoinState] = useState<CoinState>("idle");
   const [result, setResult] = useState<BetSide>(null);
@@ -76,8 +77,16 @@ export default function Home() {
     if (!selectedSide || coinState === "flipping" || !userData) return;
 
     const amount = parseFloat(betAmount);
-    if (isNaN(amount) || amount <= 0 || amount > userData.points) {
-      alert("Invalid bet amount or insufficient points");
+    const leverageVal = parseFloat(leverage);
+    
+    if (isNaN(amount) || isNaN(leverageVal) || amount <= 0 || leverageVal < 1 || leverageVal > 100) {
+      alert("Invalid bet amount or leverage");
+      return;
+    }
+
+    // Check if user has enough points for bet
+    if (amount > userData.points) {
+      alert("Insufficient points");
       return;
     }
 
@@ -97,6 +106,7 @@ export default function Home() {
           walletAddress: address,
           betAmount: amount,
           selectedSide,
+          leverage: leverageVal,
         }),
       });
 
@@ -291,8 +301,8 @@ export default function Home() {
                 </div>
                 <div className="text-sm text-gray-700 mt-1">
                   {isWinner
-                    ? `+${parseFloat(betAmount)} points`
-                    : `-${parseFloat(betAmount)} points`}
+                    ? `+${pointsChange.toFixed(2)} points (${parseFloat(leverage) || 2}x leverage)`
+                    : `${pointsChange.toFixed(2)} points (${parseFloat(leverage) || 2}x leverage)`}
                 </div>
                 {isWinner && (
                   <div className="text-xs text-green-600 mt-2 font-semibold">
@@ -303,32 +313,32 @@ export default function Home() {
             )}
 
             {/* Bet Amount Input */}
-            <div className="mb-6">
-              <label className="block text-gray-700 font-medium mb-2 text-center">
-                Bet Amount (Points)
+            <div className="mb-4">
+              <label className="block text-gray-700 font-medium mb-2 text-center text-sm">
+                Bet Amount
               </label>
               <div className="flex gap-2">
                 <button
                   onClick={() => setBetAmount("10")}
-                  className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700 transition-colors"
+                  className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded text-gray-700 text-xs transition-colors"
                 >
                   10
                 </button>
                 <button
                   onClick={() => setBetAmount("50")}
-                  className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700 transition-colors"
+                  className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded text-gray-700 text-xs transition-colors"
                 >
                   50
                 </button>
                 <button
                   onClick={() => setBetAmount("100")}
-                  className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700 transition-colors"
+                  className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded text-gray-700 text-xs transition-colors"
                 >
                   100
                 </button>
                 <button
                   onClick={() => setBetAmount("500")}
-                  className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700 transition-colors"
+                  className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded text-gray-700 text-xs transition-colors"
                 >
                   500
                 </button>
@@ -336,11 +346,113 @@ export default function Home() {
                   type="number"
                   value={betAmount}
                   onChange={(e) => setBetAmount(e.target.value)}
-                  className="flex-1 px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Custom amount"
+                  className="flex-1 px-3 py-1.5 bg-gray-50 border border-gray-300 rounded text-gray-900 text-xs placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Custom"
                   min="1"
                   step="1"
                 />
+              </div>
+            </div>
+
+            {/* Leverage Selector */}
+            <div className="mb-4">
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-gray-700 font-medium text-sm">
+                  Leverage
+                </label>
+                <span className="text-xs text-gray-500">
+                  Risk: {userData ? (parseFloat(betAmount) || 0).toFixed(2) : '0'} points
+                </span>
+              </div>
+              <div className="flex gap-2 mb-2 flex-wrap">
+                <button
+                  onClick={() => setLeverage("1")}
+                  className={`px-3 py-1.5 rounded text-xs transition-colors ${
+                    leverage === "1"
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  }`}
+                >
+                  1x
+                </button>
+                <button
+                  onClick={() => setLeverage("2")}
+                  className={`px-3 py-1.5 rounded text-xs transition-colors ${
+                    leverage === "2"
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  }`}
+                >
+                  2x
+                </button>
+                <button
+                  onClick={() => setLeverage("5")}
+                  className={`px-3 py-1.5 rounded text-xs transition-colors ${
+                    leverage === "5"
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  }`}
+                >
+                  5x
+                </button>
+                <button
+                  onClick={() => setLeverage("10")}
+                  className={`px-3 py-1.5 rounded text-xs transition-colors ${
+                    leverage === "10"
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  }`}
+                >
+                  10x
+                </button>
+                <button
+                  onClick={() => setLeverage("25")}
+                  className={`px-3 py-1.5 rounded text-xs transition-colors ${
+                    leverage === "25"
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  }`}
+                >
+                  25x
+                </button>
+                <button
+                  onClick={() => setLeverage("50")}
+                  className={`px-3 py-1.5 rounded text-xs transition-colors ${
+                    leverage === "50"
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  }`}
+                >
+                  50x
+                </button>
+                <button
+                  onClick={() => setLeverage("100")}
+                  className={`px-3 py-1.5 rounded text-xs transition-colors ${
+                    leverage === "100"
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  }`}
+                >
+                  100x
+                </button>
+                <input
+                  type="number"
+                  value={leverage}
+                  onChange={(e) => setLeverage(e.target.value)}
+                  className="w-16 px-2 py-1.5 bg-gray-50 border border-gray-300 rounded text-gray-900 text-xs placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Custom"
+                  min="1"
+                  max="100"
+                  step="0.1"
+                />
+              </div>
+              <div className="flex items-center justify-between text-xs mt-1">
+                <span className="text-gray-500">
+                  Potential Win: <span className="text-green-600 font-semibold">+{userData ? (parseFloat(betAmount) * (parseFloat(leverage) - 1) || 0).toFixed(2) : '0'}</span>
+                </span>
+                <span className="text-gray-500">
+                  Potential Loss: <span className="text-red-600 font-semibold">-{userData ? (parseFloat(betAmount) || 0).toFixed(2) : '0'}</span>
+                </span>
               </div>
             </div>
 
@@ -402,12 +514,16 @@ export default function Home() {
                 parseFloat(betAmount) <= 0 ||
                 parseFloat(betAmount) > points ||
                 !isConnected ||
-                isLoading
+                isLoading ||
+                parseFloat(leverage) < 1 ||
+                parseFloat(leverage) > 100
               }
               className={`w-full py-4 rounded-2xl font-bold text-xl transition-all ${
                 selectedSide &&
                 parseFloat(betAmount) > 0 &&
                 parseFloat(betAmount) <= points &&
+                parseFloat(leverage) >= 1 &&
+                parseFloat(leverage) <= 100 &&
                 coinState === "idle" &&
                 isConnected &&
                 !isLoading
@@ -444,8 +560,7 @@ export default function Home() {
 
             {/* Info */}
             <div className="mt-6 text-center text-gray-500 text-xs">
-              💡 Winners get 2x their bet instantly! Connect wallet to start
-              playing.
+              💡 Choose your leverage (1x-100x) to multiply your wins and losses. Connect wallet to start playing.
             </div>
           </>
         )}

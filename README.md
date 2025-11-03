@@ -7,10 +7,10 @@ A modern, interactive coin flip betting application built with Next.js and Tailw
 - 🔗 **Wallet Integration** - Connect your wallet using Reown/WalletConnect
 - 📊 **Analytics Dashboard** - Comprehensive dashboard with win/loss analytics by day and hour (default view)
 - 🎯 **Heads/Tails Betting** - Choose your side and place bets
-- ⚡ **Instant Payouts** - Winners receive points immediately (2x bet amount)
+- ⚡ **Leverage Trading** - Choose leverage from 1x to 100x (futures-style trading)
 - 💰 **Points System** - Track your points in real-time with MongoDB
 - 🔐 **User Authentication** - Automatic user creation on wallet connection
-- 📈 **Game History** - View recent games with detailed results and timestamps
+- 📈 **Game History** - View recent games with detailed results, leverage, and timestamps
 - 🎨 **Minimalistic UI** - Clean, light theme design with centered layout
 - 🎬 **Smooth Animations** - Coin flip animations and transitions
 - 🔄 **Auto Commit** - Automated git commits and pushes
@@ -110,9 +110,12 @@ coin-flip-betting/
 1. **Connect Your Wallet** - Click "Connect Wallet" and select your preferred wallet (MetaMask, WalletConnect, etc.)
    - Your account is automatically created with 1,000 starting points
 2. **Set Your Bet Amount** - Choose from preset amounts (10, 50, 100, 500) or enter a custom value in points
-3. **Select Your Side** - Click on Heads 🟡 or Tails ⚪️
-4. **Flip the Coin** - Click the "Flip Coin!" button
-5. **Instant Payouts** - If you win, you instantly receive 2x your bet amount in points! Your points are updated immediately in the database.
+3. **Choose Your Leverage** - Select leverage from 1x to 100x (futures-style trading)
+   - Higher leverage = Higher potential win but you only risk your bet amount
+   - Example: 10x leverage with 100 points bet = potential +900 win, but only -100 loss
+4. **Select Your Side** - Click on Heads 🟡 or Tails ⚪️
+5. **Flip the Coin** - Click the "Flip Coin!" button
+6. **Instant Payouts** - If you win, you instantly receive your profit based on leverage! Points are updated immediately in the database.
 
 ## Wallet Support
 
@@ -124,12 +127,17 @@ The app supports multiple wallet providers through Reown/WalletConnect:
 - Trust Wallet
 - And 300+ more wallets via WalletConnect
 
-## Points System
+## Points System & Leverage
 
 - **Starting Points:** Every new user receives 1,000 points upon wallet connection
-- **Instant Payouts:** Winners receive 2x their bet amount instantly
+- **Leverage Trading:** Choose leverage from 1x to 100x (similar to futures trading)
+  - **If you win:** You get betAmount × (leverage - 1) in profit
+    - Example: 100 points bet with 10x leverage = +900 points profit
+  - **If you lose:** You only lose your bet amount (the margin)
+    - Example: 100 points bet with 10x leverage = -100 points loss
+- **Instant Payouts:** Winners receive their profit instantly based on leverage
 - **Points Storage:** All points are stored securely in MongoDB
-- **Statistics:** Track your total flips, wins, and losses in real-time
+- **Statistics:** Track your total flips, wins, losses, and leverage used in real-time
 
 ## Analytics Dashboard
 

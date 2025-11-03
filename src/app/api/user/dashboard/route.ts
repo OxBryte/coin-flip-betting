@@ -77,6 +77,7 @@ export async function GET(request: NextRequest) {
         result: game.result,
         selectedSide: game.selectedSide,
         betAmount: game.betAmount,
+        leverage: game.leverage || 2,
         pointsChange: game.pointsChange,
         isWinner: game.isWinner,
         timestamp: game.timestamp,
