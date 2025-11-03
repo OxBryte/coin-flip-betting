@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useAccount, useDisconnect } from "wagmi";
-import { useWeb3Modal } from "@reown/appkit/react";
+import { useAppKit } from "@reown/appkit/react";
 import Dashboard from "@/components/Dashboard";
 
 type BetSide = "heads" | "tails" | null;
@@ -19,7 +19,7 @@ interface UserData {
 
 export default function Home() {
   const { isConnected, address } = useAccount();
-  const { open } = useWeb3Modal();
+  const { open } = useAppKit();
   const { disconnect } = useDisconnect();
   const [viewMode, setViewMode] = useState<ViewMode>("dashboard"); // Dashboard is default
   const [betAmount, setBetAmount] = useState<string>("10");
