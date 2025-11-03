@@ -1,60 +1,114 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAccount, useDisconnect } from 'wagmi';
 import { useWeb3Modal } from '@reown/appkit/react';
 
 type BetSide = 'heads' | 'tails' | null;
 type CoinState = 'idle' | 'flipping' | 'result';
 
+interface UserData {
+  walletAddress: string;
+  points: number;
+  totalWins: number;
+  totalLosses: number;
+  totalFlips: number;
+}
+
 export default function Home() {
   const { isConnected, address } = useAccount();
   const { open } = useWeb3Modal();
   const { disconnect } = useDisconnect();
-  const [betAmount, setBetAmount] = useState<string>('0.1');
+  const [betAmount, setBetAmount] = useState<string>('10');
   const [selectedSide, setSelectedSide] = useState<BetSide>(null);
   const [coinState, setCoinState] = useState<CoinState>('idle');
   const [result, setResult] = useState<BetSide>(null);
-  const [walletBalance, setWalletBalance] = useState<number>(100);
+  const [userData, setUserData] = useState<UserData | null>(null);
   const [isWinner, setIsWinner] = useState<boolean | null>(null);
-  const [flipCount, setFlipCount] = useState<number>(0);
+  const [pointsChange, setPointsChange] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const handleBetPlace = (side: BetSide) => {
-    setSelectedSide(side);
+  // Fetch or create user when wallet connects
+  useEffect(() => {
+    if (isConnected && address) {
+      fetchUserData();
+    } else {
+      setUserData(null);
+    }
+  }, [isConnected, address]);
+
+  const fetchUserData = async () => {
+    if (!address) return;
+
+    try {
+      setIsLoading(true);
+      const response = await fetch(`/api/user?walletAddress=${address}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch user data');
+      }
+      const data = await response.json();
+      setUserData(data);
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      alert('Failed to load user data. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleFlip = () => {
-    if (!isConnected) {
+  const handleBetPlace = (side: BetSide) => {
+    if (!isConnected || !userData) {
       open();
       return;
     }
-    
-    if (!selectedSide || coinState === 'flipping') return;
-    
+    setSelectedSide(side);
+  };
+
+  const handleFlip = async () => {
+    if (!isConnected || !address) {
+      open();
+      return;
+    }
+
+    if (!selectedSide || coinState === 'flipping' || !userData) return;
+
     const amount = parseFloat(betAmount);
-    if (isNaN(amount) || amount <= 0 || amount > walletBalance) {
-      alert('Invalid bet amount');
+    if (isNaN(amount) || amount <= 0 || amount > userData.points) {
+      alert('Invalid bet amount or insufficient points');
       return;
     }
 
     setCoinState('flipping');
     setResult(null);
     setIsWinner(null);
+    setPointsChange(0);
 
-    // Simulate coin flip animation
-    setTimeout(() => {
-      const randomResult: BetSide = Math.random() > 0.5 ? 'heads' : 'tails';
-      setResult(randomResult);
-      setFlipCount(prev => prev + 1);
+    try {
+      // Call API to process coin flip
+      const response = await fetch('/api/user/flip', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          walletAddress: address,
+          betAmount: amount,
+          selectedSide,
+        }),
+      });
 
-      const won = randomResult === selectedSide;
-      setIsWinner(won);
-
-      if (won) {
-        setWalletBalance(prev => prev + amount);
-      } else {
-        setWalletBalance(prev => prev - amount);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to process flip');
       }
+
+      const data = await response.json();
+
+      // Update UI with result
+      setResult(data.result);
+      setIsWinner(data.isWinner);
+      setPointsChange(data.pointsChange);
+      setUserData(data.user);
 
       setCoinState('result');
 
@@ -62,8 +116,13 @@ export default function Home() {
       setTimeout(() => {
         setCoinState('idle');
         setSelectedSide(null);
+        setPointsChange(0);
       }, 3000);
-    }, 2000);
+    } catch (error) {
+      console.error('Error processing flip:', error);
+      alert(error instanceof Error ? error.message : 'Failed to process coin flip');
+      setCoinState('idle');
+    }
   };
 
   const getCoinIcon = () => {
@@ -74,7 +133,7 @@ export default function Home() {
         </div>
       );
     }
-    
+
     if (result) {
       return (
         <div className={`text-8xl ${coinState === 'result' ? 'animate-bounce' : ''}`}>
@@ -90,6 +149,11 @@ export default function Home() {
     );
   };
 
+  const points = userData?.points || 0;
+  const totalFlips = userData?.totalFlips || 0;
+  const totalWins = userData?.totalWins || 0;
+  const totalLosses = userData?.totalLosses || 0;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4">
       <div className="max-w-2xl w-full bg-white/10 backdrop-blur-lg rounded-3xl shadow-2xl p-8 border border-white/20">
@@ -99,7 +163,7 @@ export default function Home() {
             🪙 Coin Flip Betting
           </h1>
           <p className="text-white/70 text-lg">
-            Bet on heads or tails and win crypto!
+            Bet on heads or tails and win points instantly!
           </p>
         </div>
 
@@ -146,12 +210,24 @@ export default function Home() {
           )}
         </div>
 
-        {/* Wallet Balance */}
+        {/* Points Balance */}
         <div className="bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl p-6 mb-8 text-center shadow-lg">
-          <div className="text-white/90 text-sm font-medium mb-1">Balance</div>
+          <div className="text-white/90 text-sm font-medium mb-1">Your Points</div>
           <div className="text-4xl font-bold text-white">
-            ${walletBalance.toFixed(2)}
+            {isLoading ? 'Loading...' : points.toLocaleString()}
           </div>
+          {pointsChange !== 0 && (
+            <div className={`text-lg font-semibold mt-2 ${
+              pointsChange > 0 ? 'text-green-200' : 'text-red-200'
+            }`}>
+              {pointsChange > 0 ? '+' : ''}{pointsChange} points
+            </div>
+          )}
+          {!isConnected && (
+            <div className="text-white/70 text-xs mt-2">
+              Connect wallet to start with 1,000 points
+            </div>
+          )}
         </div>
 
         {/* Coin Display */}
@@ -173,40 +249,45 @@ export default function Home() {
               Result: <span className="uppercase font-bold">{result}</span>
             </div>
             <div className="text-sm text-white/70 mt-1">
-              {isWinner ? `+$${parseFloat(betAmount)}` : `-$${parseFloat(betAmount)}`}
+              {isWinner ? `+${parseFloat(betAmount)} points` : `-${parseFloat(betAmount)} points`}
             </div>
+            {isWinner && (
+              <div className="text-xs text-green-300 mt-2 font-semibold">
+                ⚡ Instant Payout! Your points have been updated.
+              </div>
+            )}
           </div>
         )}
 
         {/* Bet Amount Input */}
         <div className="mb-6">
           <label className="block text-white font-medium mb-2 text-center">
-            Bet Amount (USD)
+            Bet Amount (Points)
           </label>
           <div className="flex gap-2">
             <button
-              onClick={() => setBetAmount('0.1')}
+              onClick={() => setBetAmount('10')}
               className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-white transition-colors"
             >
-              0.1
+              10
             </button>
             <button
-              onClick={() => setBetAmount('0.5')}
+              onClick={() => setBetAmount('50')}
               className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-white transition-colors"
             >
-              0.5
+              50
             </button>
             <button
-              onClick={() => setBetAmount('1')}
+              onClick={() => setBetAmount('100')}
               className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-white transition-colors"
             >
-              1
+              100
             </button>
             <button
-              onClick={() => setBetAmount('5')}
+              onClick={() => setBetAmount('500')}
               className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-white transition-colors"
             >
-              5
+              500
             </button>
             <input
               type="number"
@@ -214,8 +295,8 @@ export default function Home() {
               onChange={(e) => setBetAmount(e.target.value)}
               className="flex-1 px-4 py-2 bg-white/20 border border-white/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50"
               placeholder="Custom amount"
-              min="0.01"
-              step="0.01"
+              min="1"
+              step="1"
             />
           </div>
         </div>
@@ -226,23 +307,23 @@ export default function Home() {
           <div className="flex gap-4">
             <button
               onClick={() => handleBetPlace('heads')}
-              disabled={!isConnected || coinState === 'flipping' || coinState === 'result'}
+              disabled={!isConnected || coinState === 'flipping' || coinState === 'result' || isLoading}
               className={`flex-1 py-6 rounded-2xl font-bold text-2xl transition-all transform hover:scale-105 ${
                 selectedSide === 'heads'
                   ? 'bg-yellow-500 text-white shadow-2xl scale-105'
                   : 'bg-white/20 text-white hover:bg-white/30'
-              } ${!isConnected || coinState !== 'idle' ? 'opacity-50 cursor-not-allowed' : ''}`}
+              } ${!isConnected || coinState !== 'idle' || isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
               🟡 Heads
             </button>
             <button
               onClick={() => handleBetPlace('tails')}
-              disabled={!isConnected || coinState === 'flipping' || coinState === 'result'}
+              disabled={!isConnected || coinState === 'flipping' || coinState === 'result' || isLoading}
               className={`flex-1 py-6 rounded-2xl font-bold text-2xl transition-all transform hover:scale-105 ${
                 selectedSide === 'tails'
                   ? 'bg-gray-200 text-gray-900 shadow-2xl scale-105'
                   : 'bg-white/20 text-white hover:bg-white/30'
-              } ${!isConnected || coinState !== 'idle' ? 'opacity-50 cursor-not-allowed' : ''}`}
+              } ${!isConnected || coinState !== 'idle' || isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
               ⚪️ Tails
             </button>
@@ -252,9 +333,9 @@ export default function Home() {
         {/* Flip Button */}
         <button
           onClick={handleFlip}
-          disabled={!selectedSide || coinState === 'flipping' || parseFloat(betAmount) <= 0 || parseFloat(betAmount) > walletBalance}
+          disabled={!selectedSide || coinState === 'flipping' || parseFloat(betAmount) <= 0 || parseFloat(betAmount) > points || !isConnected || isLoading}
           className={`w-full py-4 rounded-2xl font-bold text-xl transition-all ${
-            selectedSide && parseFloat(betAmount) > 0 && parseFloat(betAmount) <= walletBalance && coinState === 'idle'
+            selectedSide && parseFloat(betAmount) > 0 && parseFloat(betAmount) <= points && coinState === 'idle' && isConnected && !isLoading
               ? 'bg-gradient-to-r from-pink-500 to-rose-500 text-white hover:from-pink-600 hover:to-rose-600 shadow-2xl transform hover:scale-105'
               : 'bg-gray-500/50 text-gray-300 cursor-not-allowed'
           }`}
@@ -264,21 +345,25 @@ export default function Home() {
 
         {/* Stats */}
         <div className="mt-8 pt-6 border-t border-white/20">
-          <div className="grid grid-cols-2 gap-4 text-center">
+          <div className="grid grid-cols-3 gap-4 text-center">
             <div className="bg-white/10 rounded-xl p-4">
               <div className="text-white/70 text-sm mb-1">Total Flips</div>
-              <div className="text-2xl font-bold text-white">{flipCount}</div>
+              <div className="text-2xl font-bold text-white">{totalFlips}</div>
             </div>
             <div className="bg-white/10 rounded-xl p-4">
-              <div className="text-white/70 text-sm mb-1">Current Bet</div>
-              <div className="text-2xl font-bold text-white">${betAmount}</div>
+              <div className="text-white/70 text-sm mb-1">Wins</div>
+              <div className="text-2xl font-bold text-green-400">{totalWins}</div>
+            </div>
+            <div className="bg-white/10 rounded-xl p-4">
+              <div className="text-white/70 text-sm mb-1">Losses</div>
+              <div className="text-2xl font-bold text-red-400">{totalLosses}</div>
             </div>
           </div>
         </div>
 
-        {/* Warning */}
-        <div className="mt-6 text-center text-white/50 text-xs">
-          ⚠️ This is a demo. No real money or crypto is being wagered.
+        {/* Info */}
+        <div className="mt-6 text-center text-white/60 text-xs">
+          💡 Winners get 2x their bet instantly! Connect wallet to start playing.
         </div>
       </div>
     </div>

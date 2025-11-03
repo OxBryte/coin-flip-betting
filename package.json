@@ -12,6 +12,7 @@
     "@reown/appkit": "^1.8.12",
     "@reown/appkit-adapter-wagmi": "^1.8.12",
     "@tanstack/react-query": "^5.90.6",
+    "mongoose": "^8.19.2",
     "next": "16.0.1",
     "react": "19.2.0",
     "react-dom": "19.2.0",
