@@ -62,11 +62,27 @@ export async function POST(request: NextRequest) {
     let pointsChange = 0;
     let newPoints = user.points;
 
+    // Calculate current streak
+    let newStreak = user.currentStreak || 0;
+    if (isWinner) {
+      newStreak += 1;
+    } else {
+      newStreak = 0;
+    }
+
+    // Calculate streak bonus (10% bonus per streak, max 100% at 10+ streak)
+    const streakBonusMultiplier = Math.min(1 + (newStreak * 0.1), 2); // Max 2x at 10+ streak
+
     if (isWinner) {
       // Winner: Total return = betAmount * leverage
       // Profit = betAmount * leverage - betAmount = betAmount * (leverage - 1)
       const totalReturn = betPoints * leverageMultiplier;
-      const profit = betPoints * (leverageMultiplier - 1);
+      let profit = betPoints * (leverageMultiplier - 1);
+      
+      // Apply streak bonus to profit
+      const streakBonus = profit * (streakBonusMultiplier - 1);
+      profit = profit + streakBonus;
+      
       pointsChange = profit; // Net gain
       newPoints = user.points + profit;
     } else {
@@ -92,6 +108,8 @@ export async function POST(request: NextRequest) {
       {
         $set: {
           points: newPoints,
+          currentStreak: newStreak,
+          ...(isWinner ? { totalEarned: (user.totalEarned || 0) + pointsChange } : {}),
         },
         $inc: {
           totalFlips: 1,
@@ -113,12 +131,15 @@ export async function POST(request: NextRequest) {
       isWinner,
       pointsChange,
       leverage: leverageMultiplier,
+      streak: newStreak,
+      streakBonus: isWinner ? streakBonusMultiplier : 1,
       user: {
         walletAddress: updatedUser!.walletAddress,
         points: updatedUser!.points,
         totalWins: updatedUser!.totalWins,
         totalLosses: updatedUser!.totalLosses,
         totalFlips: updatedUser!.totalFlips,
+        currentStreak: updatedUser!.currentStreak,
       },
     });
   } catch (error) {

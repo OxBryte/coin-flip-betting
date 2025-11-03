@@ -4,10 +4,12 @@ import { useState, useEffect, useCallback } from "react";
 import { useAccount, useDisconnect } from "wagmi";
 import { useAppKit } from "@reown/appkit/react";
 import Dashboard from "@/components/Dashboard";
+import Leaderboard from "@/components/Leaderboard";
+import DailyBonus from "@/components/DailyBonus";
 
 type BetSide = "heads" | "tails" | null;
 type CoinState = "idle" | "flipping" | "result";
-type ViewMode = "dashboard" | "play";
+type ViewMode = "dashboard" | "play" | "leaderboard";
 
 interface UserData {
   walletAddress: string;
@@ -15,6 +17,8 @@ interface UserData {
   totalWins: number;
   totalLosses: number;
   totalFlips: number;
+  currentStreak?: number;
+  totalEarned?: number;
 }
 
 export default function Home() {
@@ -170,10 +174,11 @@ export default function Home() {
   const totalFlips = userData?.totalFlips || 0;
   const totalWins = userData?.totalWins || 0;
   const totalLosses = userData?.totalLosses || 0;
+  const currentStreak = userData?.currentStreak || 0;
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className={`${viewMode === "dashboard" ? "max-w-7xl" : "max-w-2xl"} w-full bg-white rounded-2xl shadow-sm p-6`}>
+      <div className={`${viewMode === "dashboard" || viewMode === "leaderboard" ? "max-w-7xl" : "max-w-2xl"} w-full bg-white rounded-2xl shadow-sm p-6`}>
         {/* Header */}
         <div className="text-center mb-6">
           <h1 className="text-4xl font-semibold text-gray-900 mb-1">
@@ -220,34 +225,60 @@ export default function Home() {
           )}
         </div>
 
-        {/* Tab Navigation */}
-        {isConnected && (
-          <div className="mb-5 flex gap-1 bg-gray-100 p-1 rounded-lg">
-            <button
-              onClick={() => setViewMode("dashboard")}
-              className={`flex-1 py-2 px-3 rounded text-sm font-medium transition-all ${
-                viewMode === "dashboard"
-                  ? "bg-white text-gray-900 shadow-sm"
-                  : "text-gray-600 hover:text-gray-900"
-              }`}
-            >
-              Dashboard
-            </button>
-            <button
-              onClick={() => setViewMode("play")}
-              className={`flex-1 py-2 px-3 rounded text-sm font-medium transition-all ${
-                viewMode === "play"
-                  ? "bg-white text-gray-900 shadow-sm"
-                  : "text-gray-600 hover:text-gray-900"
-              }`}
-            >
-              Play
-            </button>
-          </div>
-        )}
+            {/* Tab Navigation */}
+            {isConnected && (
+              <div className="mb-5 flex gap-1 bg-gray-100 p-1 rounded-lg">
+                <button
+                  onClick={() => setViewMode("dashboard")}
+                  className={`flex-1 py-2 px-3 rounded text-sm font-medium transition-all ${
+                    viewMode === "dashboard"
+                      ? "bg-white text-gray-900 shadow-sm"
+                      : "text-gray-600 hover:text-gray-900"
+                  }`}
+                >
+                  Dashboard
+                </button>
+                <button
+                  onClick={() => setViewMode("play")}
+                  className={`flex-1 py-2 px-3 rounded text-sm font-medium transition-all ${
+                    viewMode === "play"
+                      ? "bg-white text-gray-900 shadow-sm"
+                      : "text-gray-600 hover:text-gray-900"
+                  }`}
+                >
+                  Play
+                </button>
+                <button
+                  onClick={() => setViewMode("leaderboard")}
+                  className={`flex-1 py-2 px-3 rounded text-sm font-medium transition-all ${
+                    viewMode === "leaderboard"
+                      ? "bg-white text-gray-900 shadow-sm"
+                      : "text-gray-600 hover:text-gray-900"
+                  }`}
+                >
+                  Leaderboard
+                </button>
+              </div>
+            )}
 
-        {/* Dashboard View */}
-        {viewMode === "dashboard" && <Dashboard walletAddress={address} />}
+            {/* Daily Bonus */}
+            {isConnected && viewMode !== "leaderboard" && (
+              <DailyBonus 
+                walletAddress={address} 
+                onBonusClaimed={() => {
+                  fetchUserData();
+                  if (viewMode === "dashboard") {
+                    window.dispatchEvent(new Event("dashboard-refresh"));
+                  }
+                }} 
+              />
+            )}
+
+            {/* Dashboard View */}
+            {viewMode === "dashboard" && <Dashboard walletAddress={address} />}
+
+            {/* Leaderboard View */}
+            {viewMode === "leaderboard" && <Leaderboard currentWallet={address} />}
 
         {/* Play View */}
         {viewMode === "play" && (
@@ -268,6 +299,11 @@ export default function Home() {
                 >
                   {pointsChange > 0 ? "+" : ""}
                   {pointsChange} points
+                </div>
+              )}
+              {currentStreak > 0 && (
+                <div className="text-orange-600 text-sm font-semibold mt-2">
+                  🔥 {currentStreak}x Win Streak Active!
                 </div>
               )}
               {!isConnected && (
@@ -305,9 +341,16 @@ export default function Home() {
                     : `${pointsChange.toFixed(2)} points (${parseFloat(leverage) || 2}x leverage)`}
                 </div>
                 {isWinner && (
-                  <div className="text-xs text-green-600 mt-2 font-semibold">
-                    ⚡ Instant Payout! Your points have been updated.
-                  </div>
+                  <>
+                    <div className="text-xs text-green-600 mt-2 font-semibold">
+                      ⚡ Instant Payout! Your points have been updated.
+                    </div>
+                    {userData?.currentStreak && userData.currentStreak > 1 && (
+                      <div className="text-xs text-orange-600 mt-1 font-semibold">
+                        🔥 {userData.currentStreak}x Win Streak! Bonus applied!
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             )}

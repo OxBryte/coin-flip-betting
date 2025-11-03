@@ -18,6 +18,7 @@ export async function GET(request: NextRequest) {
 
     // Find or create user
     let user = await User.findOne({ walletAddress: walletAddress.toLowerCase() });
+    const now = new Date();
 
     if (!user) {
       // Create new user with starting points
@@ -27,7 +28,16 @@ export async function GET(request: NextRequest) {
         totalWins: 0,
         totalLosses: 0,
         totalFlips: 0,
+        currentStreak: 0,
+        lastLoginDate: now,
+        totalEarned: 0,
       });
+    } else {
+      // Update last login date
+      await User.findOneAndUpdate(
+        { walletAddress: walletAddress.toLowerCase() },
+        { $set: { lastLoginDate: now } }
+      );
     }
 
     return NextResponse.json({
@@ -36,6 +46,8 @@ export async function GET(request: NextRequest) {
       totalWins: user.totalWins,
       totalLosses: user.totalLosses,
       totalFlips: user.totalFlips,
+      currentStreak: user.currentStreak || 0,
+      totalEarned: user.totalEarned || 0,
     });
   } catch (error) {
     console.error('Error in GET /api/user:', error);
@@ -62,14 +74,23 @@ export async function POST(request: NextRequest) {
 
     // Check if user already exists
     let user = await User.findOne({ walletAddress: walletAddress.toLowerCase() });
+    const now = new Date();
 
     if (user) {
+      // Update last login date
+      await User.findOneAndUpdate(
+        { walletAddress: walletAddress.toLowerCase() },
+        { $set: { lastLoginDate: now } }
+      );
+      
       return NextResponse.json({
         walletAddress: user.walletAddress,
         points: user.points,
         totalWins: user.totalWins,
         totalLosses: user.totalLosses,
         totalFlips: user.totalFlips,
+        currentStreak: user.currentStreak || 0,
+        totalEarned: user.totalEarned || 0,
       });
     }
 
@@ -80,6 +101,9 @@ export async function POST(request: NextRequest) {
       totalWins: 0,
       totalLosses: 0,
       totalFlips: 0,
+      currentStreak: 0,
+      lastLoginDate: now,
+      totalEarned: 0,
     });
 
     return NextResponse.json({
@@ -88,6 +112,8 @@ export async function POST(request: NextRequest) {
       totalWins: user.totalWins,
       totalLosses: user.totalLosses,
       totalFlips: user.totalFlips,
+      currentStreak: user.currentStreak || 0,
+      totalEarned: user.totalEarned || 0,
     }, { status: 201 });
   } catch (error) {
     console.error('Error in POST /api/user:', error);
