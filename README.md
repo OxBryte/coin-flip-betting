@@ -5,11 +5,12 @@ A modern, interactive coin flip betting application built with Next.js and Tailw
 ## Features
 
 - 🔗 **Wallet Integration** - Connect your wallet using Reown/WalletConnect
+- 📊 **Analytics Dashboard** - Comprehensive dashboard with win/loss analytics by day and hour (default view)
 - 🎯 **Heads/Tails Betting** - Choose your side and place bets
 - ⚡ **Instant Payouts** - Winners receive points immediately (2x bet amount)
 - 💰 **Points System** - Track your points in real-time with MongoDB
 - 🔐 **User Authentication** - Automatic user creation on wallet connection
-- 📊 **Statistics** - Track total flips, wins, and losses
+- 📈 **Game History** - View recent games with detailed results and timestamps
 - 🎨 **Beautiful UI** - Modern glassmorphic design with Tailwind CSS
 - 🎬 **Smooth Animations** - Coin flip animations and transitions
 - 🔄 **Auto Commit** - Automated git commits and pushes
@@ -84,14 +85,17 @@ coin-flip-betting/
 │   ├── app/
 │   │   ├── api/
 │   │   │   └── user/
-│   │   │       ├── route.ts      # User authentication API
+│   │   │       ├── route.ts       # User authentication API
+│   │   │       ├── dashboard/
+│   │   │       │   └── route.ts   # Dashboard analytics API
 │   │   │       └── flip/
-│   │   │           └── route.ts  # Coin flip & payout API
+│   │   │           └── route.ts   # Coin flip & payout API
 │   │   ├── page.tsx              # Main coin flip betting component
 │   │   ├── layout.tsx            # Root layout with AppKit provider
 │   │   └── globals.css            # Global styles with Tailwind
 │   ├── components/
-│   │   └── AppKitProvider.tsx    # Wallet connection provider
+│   │   ├── AppKitProvider.tsx    # Wallet connection provider
+│   │   └── Dashboard.tsx         # Analytics dashboard component
 │   ├── lib/
 │   │   └── mongodb.ts            # MongoDB connection utility
 │   └── models/
@@ -127,13 +131,39 @@ The app supports multiple wallet providers through Reown/WalletConnect:
 - **Points Storage:** All points are stored securely in MongoDB
 - **Statistics:** Track your total flips, wins, and losses in real-time
 
+## Analytics Dashboard
+
+The dashboard is the default view when you connect your wallet. It provides comprehensive analytics and insights:
+
+### Key Metrics
+- **Total Flips:** Your overall game count
+- **Win Rate:** Percentage of games won
+- **Best Streak:** Longest consecutive win streak
+- **Current Points:** Your available points balance
+- **Total Wins/Losses:** Lifetime win/loss counts with points earned/lost
+
+### Analytics Features
+- **7-Day Performance Chart:** Visual representation of wins vs losses over the last 7 days
+- **Hourly Performance:** See which hours of the day you perform best (with win rate for each hour)
+- **Recent Games:** Scrollable list of your last 20 games with:
+  - Result (heads/tails)
+  - Your selection
+  - Points change
+  - Timestamp
+- **Biggest Win:** Highlight of your largest win with bet amount and date
+- **Auto-Refresh:** Dashboard automatically updates when you complete a game
+
+### View Modes
+- **Dashboard View:** Analytics and statistics (default)
+- **Play View:** Coin flip betting interface
+
 ## Features in Development
 
 - Real crypto smart contracts integration
 - Provably fair randomization
 - Multiplayer betting pools
-- Leaderboard
-- History tracking
+- Global leaderboard
+- Enhanced history filtering and export
 - Cross-chain support
 
 ## License

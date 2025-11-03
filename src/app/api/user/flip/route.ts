@@ -61,6 +61,16 @@ export async function POST(request: NextRequest) {
       newPoints = user.points - betPoints;
     }
 
+    // Create game history entry
+    const gameHistoryEntry = {
+      result: coinResult,
+      selectedSide: selectedSide as 'heads' | 'tails',
+      betAmount: betPoints,
+      pointsChange,
+      isWinner,
+      timestamp: new Date(),
+    };
+
     // Update user in database
     const updatedUser = await User.findOneAndUpdate(
       { walletAddress: walletAddress.toLowerCase() },
@@ -71,6 +81,12 @@ export async function POST(request: NextRequest) {
         $inc: {
           totalFlips: 1,
           ...(isWinner ? { totalWins: 1 } : { totalLosses: 1 }),
+        },
+        $push: {
+          gameHistory: {
+            $each: [gameHistoryEntry],
+            $slice: -1000, // Keep only last 1000 games
+          },
         },
       },
       { new: true }
