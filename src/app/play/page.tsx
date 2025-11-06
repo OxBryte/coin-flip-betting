@@ -166,16 +166,31 @@ export default function PlayPage() {
               </div>
             </div>
           ) : (
-            <div className="bg-orange-50 rounded-lg p-2.5">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
               <div className="flex items-center justify-between">
-                <div className="text-gray-700 text-xs">
-                  Connect your wallet to play
+                <div className="flex items-center gap-2">
+                  <svg
+                    className="w-4 h-4 text-blue-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  <span className="text-gray-700 text-sm font-medium">
+                    Wallet not connected
+                  </span>
                 </div>
                 <button
                   onClick={() => open()}
-                  className="px-3 py-1 bg-blue-600 text-white rounded text-xs font-medium hover:bg-blue-700 transition-colors"
+                  className="px-4 py-1.5 bg-blue-600 text-white rounded text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm"
                 >
-                  Connect
+                  Connect Wallet
                 </button>
               </div>
             </div>
@@ -450,9 +465,68 @@ export default function PlayPage() {
             </div>
           </div>
         ) : (
-          <div className="text-center py-10">
-            <div className="text-gray-600 text-sm mb-2">
-              Connect your wallet to play
+          <div className="bg-white rounded-lg border border-gray-200 p-8">
+            <div className="text-center max-w-md mx-auto">
+              {/* Coin Icon */}
+              <div className="mb-6">
+                <div className="inline-block p-6 rounded-full border-2 border-gray-300 bg-gray-50">
+                  <div className="text-5xl">🪙</div>
+                </div>
+              </div>
+
+              {/* Message */}
+              <h2 className="text-xl font-semibold text-gray-900 mb-2">
+                Connect Your Wallet to Play
+              </h2>
+              <p className="text-sm text-gray-600 mb-6">
+                Connect your wallet to start betting on coin flips. You&apos;ll
+                receive 1,000 starting points to get you started!
+              </p>
+
+              {/* Connect Button */}
+              <button
+                onClick={() => open()}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors shadow-sm hover:shadow"
+              >
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                  />
+                </svg>
+                Connect Wallet
+              </button>
+
+              {/* Features */}
+              <div className="mt-8 pt-6 border-t border-gray-200">
+                <div className="grid grid-cols-3 gap-4 text-center">
+                  <div>
+                    <div className="text-2xl mb-1">🎲</div>
+                    <div className="text-xs font-medium text-gray-700">
+                      Instant Play
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-2xl mb-1">⚡</div>
+                    <div className="text-xs font-medium text-gray-700">
+                      1x-100x Leverage
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-2xl mb-1">💰</div>
+                    <div className="text-xs font-medium text-gray-700">
+                      Free Points
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         )}
