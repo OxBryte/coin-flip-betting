@@ -1,15 +1,16 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
 import { useAccount, useDisconnect } from 'wagmi';
-import { useAppKit } from '@reown/appkit/react';
+import { useAppKit, useAppKitAccount } from '@reown/appkit/react';
 import DailyBonus from '@/components/DailyBonus';
 
 type BetSide = 'heads' | 'tails' | null;
 type CoinState = 'idle' | 'flipping' | 'result';
 
 export default function PlayPage() {
-  const { isConnected, address } = useAccount();
+  const { isConnected, address } = useAppKitAccount();
   const { open } = useAppKit();
   const { disconnect } = useDisconnect();
 

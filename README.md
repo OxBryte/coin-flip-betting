@@ -25,12 +25,114 @@ A modern, interactive coin flip betting application built with Next.js and Tailw
 - **State Management:** TanStack Query
 - **Deployment:** Vercel-ready
 
+## Required Packages
+
+### Core Dependencies
+
+```json
+{
+  "next": "16.0.1",
+  "react": "19.2.0",
+  "react-dom": "19.2.0",
+  "typescript": "^5",
+  "tailwindcss": "^4"
+}
+```
+
+### WalletConnect/Reown Packages 🔑
+
+The following **Reown (WalletConnect) packages** are essential for wallet connectivity:
+
+```json
+{
+  "@reown/appkit": "^1.8.12",
+  "@reown/appkit-adapter-wagmi": "^1.8.12"
+}
+```
+
+**Why these packages?**
+
+- **`@reown/appkit`**: The main Reown AppKit library that provides wallet connection UI components and core functionality. This is the modern rebrand of WalletConnect's AppKit.
+- **`@reown/appkit-adapter-wagmi`**: Adapter that seamlessly integrates Reown AppKit with Wagmi, enabling React hooks for wallet interactions.
+
+These packages work together to provide:
+
+- ✅ Wallet connection UI (Connect Wallet button, wallet selection modal)
+- ✅ Support for 300+ wallets via WalletConnect protocol
+- ✅ Seamless integration with Wagmi hooks (`useAccount`, `useConnect`, etc.)
+- ✅ Mobile wallet deep linking
+- ✅ QR code scanning for WalletConnect-compatible wallets
+
+### Additional Required Packages
+
+```json
+{
+  "wagmi": "^2.19.2",
+  "viem": "^2.38.6",
+  "@tanstack/react-query": "^5.90.6",
+  "mongoose": "^8.19.2"
+}
+```
+
+**Package Details:**
+
+- **`wagmi`**: React Hooks library for Ethereum that works seamlessly with Reown AppKit
+- **`viem`**: TypeScript Ethereum library for low-level interactions
+- **`@tanstack/react-query`**: Powerful data synchronization library for server state management
+- **`mongoose`**: MongoDB object modeling for Node.js
+
+### Development Dependencies
+
+```json
+{
+  "@tailwindcss/postcss": "^4",
+  "@types/node": "^20",
+  "@types/react": "^19",
+  "@types/react-dom": "^19",
+  "eslint": "^9",
+  "eslint-config-next": "16.0.1"
+}
+```
+
 ## Getting Started
 
 ### Installation
 
+Install all dependencies including the required WalletConnect/Reown packages:
+
 ```bash
 npm install
+```
+
+This will install:
+
+- ✅ Core packages (Next.js, React, TypeScript)
+- ✅ **WalletConnect/Reown packages** (`@reown/appkit`, `@reown/appkit-adapter-wagmi`)
+- ✅ Wagmi & Viem for Ethereum interactions
+- ✅ MongoDB with Mongoose
+- ✅ TanStack Query for state management
+- ✅ Tailwind CSS for styling
+
+**Note:** Make sure you have Node.js 18+ installed before running the installation.
+
+#### Installing WalletConnect/Reown Packages Separately
+
+If you need to install the WalletConnect/Reown packages separately, you can use:
+
+```bash
+npm install @reown/appkit@^1.8.12 @reown/appkit-adapter-wagmi@^1.8.12
+```
+
+Or with yarn:
+
+```bash
+yarn add @reown/appkit@^1.8.12 @reown/appkit-adapter-wagmi@^1.8.12
+```
+
+These packages must be installed together with their peer dependencies (`wagmi` and `viem`):
+
+```bash
+npm install @reown/appkit @reown/appkit-adapter-wagmi wagmi viem
 ```
 
 ### Environment Setup
@@ -38,19 +140,27 @@ npm install
 Create a `.env.local` file in the root directory and add the following:
 
 ```bash
-# Reown/WalletConnect Project ID
+# Reown/WalletConnect Project ID (REQUIRED for @reown/appkit)
 NEXT_PUBLIC_REOWN_PROJECT_ID=your_project_id_here
 
 # MongoDB Connection String
 MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/coinflip?retryWrites=true&w=majority
 ```
 
-**Getting your Project ID:**
-- Visit [Reown Cloud](https://dashboard.reown.com)
-- Create a new project or use an existing one
-- Copy your Project ID
+**Getting your Reown Project ID (Required for WalletConnect):**
+
+The `NEXT_PUBLIC_REOWN_PROJECT_ID` is **essential** for the `@reown/appkit` package to work. Without it, wallet connections will fail.
+
+1. Visit [Reown Cloud Dashboard](https://dashboard.reown.com)
+2. Sign in or create a free account
+3. Create a new project or use an existing one
+4. Copy your Project ID from the project settings
+5. Add it to your `.env.local` file as `NEXT_PUBLIC_REOWN_PROJECT_ID`
+
+**Note:** The Project ID is used by the WalletConnect protocol to establish secure connections between your app and user wallets. It's safe to expose this in your client-side code (hence the `NEXT_PUBLIC_` prefix).
 
 **Setting up MongoDB:**
+
 1. Create a free MongoDB Atlas account at [mongodb.com/cloud/atlas](https://www.mongodb.com/cloud/atlas)
 2. Create a new cluster (free tier available)
 3. Create a database user and set a password
@@ -119,13 +229,41 @@ coin-flip-betting/
 
 ## Wallet Support
 
-The app supports multiple wallet providers through Reown/WalletConnect:
+The app supports multiple wallet providers through **Reown (WalletConnect) packages** (`@reown/appkit` & `@reown/appkit-adapter-wagmi`):
+
+### Supported Wallets
+
+The following wallets are supported out of the box:
+
+**Desktop Wallets:**
 
 - MetaMask
 - Coinbase Wallet
 - Rainbow Wallet
 - Trust Wallet
-- And 300+ more wallets via WalletConnect
+- Ledger Live
+- Zerion
+
+**Mobile Wallets (via WalletConnect):**
+
+- MetaMask Mobile
+- Trust Wallet
+- Rainbow Mobile
+- Coinbase Wallet Mobile
+- SafePal
+- TokenPocket
+
+**And 300+ more wallets** via the WalletConnect protocol!
+
+### How It Works
+
+The wallet connectivity is powered by:
+
+1. **`@reown/appkit`** - Provides the wallet connection UI and core connection logic
+2. **`@reown/appkit-adapter-wagmi`** - Bridges AppKit with Wagmi hooks for seamless integration
+3. **Wagmi** - React hooks for interacting with connected wallets (`useAccount`, `useBalance`, etc.)
+
+When users click "Connect Wallet", they'll see a modal powered by Reown AppKit that lists all available wallets. Mobile users can scan a QR code to connect via WalletConnect-compatible wallets.
 
 ## Points System & Leverage
 
@@ -144,6 +282,7 @@ The app supports multiple wallet providers through Reown/WalletConnect:
 The dashboard is the default view when you connect your wallet. It provides comprehensive analytics and insights with a clean, minimalistic interface:
 
 ### Key Metrics
+
 - **Total Flips:** Your overall game count
 - **Win Rate:** Percentage of games won
 - **Best Streak:** Longest consecutive win streak
@@ -151,6 +290,7 @@ The dashboard is the default view when you connect your wallet. It provides comp
 - **Total Wins/Losses:** Lifetime win/loss counts with points earned/lost
 
 ### Analytics Features
+
 - **7-Day Performance Chart:** Visual representation of wins vs losses over the last 7 days
 - **Hourly Performance:** See which hours of the day you perform best (with win rate for each hour)
 - **Recent Games:** Scrollable list of your last 20 games with:
@@ -162,12 +302,14 @@ The dashboard is the default view when you connect your wallet. It provides comp
 - **Auto-Refresh:** Dashboard automatically updates when you complete a game
 
 ### View Modes
+
 - **Dashboard View:** Analytics and statistics (default, centered layout)
 - **Play View:** Coin flip betting interface
 
 ## Design
 
 The application features a **minimalistic light theme** with:
+
 - Clean, centered layout for optimal viewing
 - Subtle gray color scheme with minimal borders
 - Compact, information-dense dashboard
